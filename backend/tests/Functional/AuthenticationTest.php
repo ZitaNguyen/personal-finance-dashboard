@@ -99,7 +99,7 @@ class AuthenticationTest extends ApiTestCase
         $json = $response->toArray(false);
         $this->assertResponseIsSuccessful();
         $this->assertArrayHasKey('message', $json);
-        $this->assertEquals('User registered successfully', $json['message']);
+        $this->assertEquals('User registered successfully, please check your email to verify your account.', $json['message']);
         $this->assertResponseStatusCodeSame(201);
     }
 
