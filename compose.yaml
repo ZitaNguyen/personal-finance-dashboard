@@ -9,19 +9,36 @@ services:
     working_dir: /var/www/backend
     volumes:
       - ./backend:/var/www/backend
+    expose:
+      - "9000"
     depends_on:
       - db
 
+  react-builder:
+    container_name: react-builder
+    build:
+      context: .
+      dockerfile: ./docker/react/Dockerfile
+    working_dir: /var/www/frontend
+    volumes:
+      - ./frontend:/var/www/frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - php
+
   nginx:
     image: nginx:alpine
-    container_name: nginx-symfony
+    container_name: nginx
     ports:
       - "8080:80"
     volumes:
       - ./backend:/var/www/backend
+      - ./frontend/dist:/var/www/frontend/dist
       - ./docker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
     depends_on:
       - php
+      - react-builder
 
   db:
     image: postgres:16
