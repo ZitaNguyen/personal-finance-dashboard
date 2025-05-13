@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
@@ -57,19 +58,32 @@ class AuthController extends AbstractController
         );
         $user->setUsername($dto->username);
 
-        // persist user
-        $this->em->persist($user);
-        $this->em->flush();
+        try {
+            // persist user
+            $this->em->persist($user);
+            $this->em->flush();
 
-        // generate signed URL for email verification
-        $signature = $this->verificationService->generateURL($user);
+            // generate signed URL for email verification
+            $signature = $this->verificationService->generateURL($user);
 
-        // send verification email
-        $emailService->sendVerificationEmail($user, $signature);
+            // send verification email
+            $emailService->sendVerificationEmail($user, $signature);
 
-        return $this->json([
-            'message' => 'User registered successfully, please check your email to verify your account.',
-        ], JsonResponse::HTTP_CREATED);
+            return $this->json([
+                'message' => 'User registered successfully, please check your email to verify your account.',
+            ], JsonResponse::HTTP_CREATED);
+        
+        } catch (\Exception $e) {
+            if ($e instanceof UniqueConstraintViolationException) {
+                return $this->json([
+                    'errorMessage' => 'User registration failed. Email already exists.',
+                ], JsonResponse::HTTP_CONFLICT);
+            }
+            // handle other exceptions
+            return $this->json([
+                'errorMessage' => 'User registration failed.' . $e->getMessage(),
+            ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
     #[Route('/api/verify-email', name: 'api_verify_email', methods: ['GET'])]

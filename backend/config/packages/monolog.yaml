@@ -6,10 +6,10 @@ when@dev:
     monolog:
         handlers:
             main:
-                type: stream
-                path: "%kernel.logs_dir%/%kernel.environment%.log"
-                level: debug
-                channels: ["!event"]
+                type: stream # write logs to a file
+                path: "%kernel.logs_dir%/%kernel.environment%.log" # write to var/log/dev.log in dev environment
+                level: debug # capture all logs with level debug and higher
+                channels: ["!event"] # exclude logs from the event channel
             # uncomment to get logging in your browser
             # you may have to allow bigger header sizes in your Web server configuration
             #firephp:
