@@ -1,16 +1,14 @@
 import { useState } from 'react';
-import { registerUser } from "../services/api";
-import { useNavigate } from 'react-router-dom';
+import { loginUser } from "../services/api";
+import { Link } from 'react-router-dom';
 
-export default function Register() {
+export default function Login() {
     const [form, setForm] = useState({
-        username: '',
         email: '',
         password: '',
     });
 
     const [message, setMessage] = useState('');
-    const navigate = useNavigate();
 
     const handleChange = (e) => { 
         setForm({...form, [e.target.name]: e.target.value });
@@ -19,16 +17,14 @@ export default function Register() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await registerUser(form);
-            if (response.status === 201) {
-                setMessage('Registration successful! Redirecting to login...');
-                setTimeout(() => {
-                    navigate('/auth');
-                }, 2000); // Redirect after 2 seconds
+            const response = await loginUser(form);
+            if (response.status === 200) {
+                setMessage('Login successful! Redirecting...');
             }
+            // get token from response and store it 
         } catch (error) {
             if (error.response) {
-                const errorMessage = error.response?.data?.errorMessage || 'Registration failed. Please try again.';
+                const errorMessage = error.response?.data?.message || 'Login failed. Please try again.';
                 setMessage(errorMessage);
             } else {
                 setMessage('Network error. Please check your connection.');
@@ -40,23 +36,11 @@ export default function Register() {
         <div className="row justify-content-center">
             <div className="col-md-6">
                 <div className='card p-4 shadow-sm'>
-                    <h2 className="mb-4 text-center">Register</h2>
+                    <h2 className="mb-4 text-center">Login</h2>
                     
                     {message && <div className="alert alert-info text-center mt-3">{message}</div>}
                     
                     <form onSubmit={handleSubmit}>
-                        <div className="mb-3">
-                            <label htmlFor="username" className="form-label">Username</label>
-                            <input 
-                                type="text" 
-                                className="form-control" 
-                                id="username" 
-                                name="username" 
-                                value={form.username} 
-                                onChange={handleChange} 
-                                required 
-                            />
-                        </div>
                         <div className="mb-3">
                             <label htmlFor="email" className="form-label">Email</label>
                             <input 
@@ -81,7 +65,11 @@ export default function Register() {
                                 required 
                             />
                         </div>
-                        <button type="submit" className="btn btn-primary w-100">Register</button>
+                        <button type="submit" className="btn btn-primary w-100">Login</button>
+
+                        <small className="form-text text-muted mt-3 text-center d-block">
+                            Don't have an account? <Link to="/register">Register here</Link>.
+                        </small>
                     </form>
                 </div>
             </div>

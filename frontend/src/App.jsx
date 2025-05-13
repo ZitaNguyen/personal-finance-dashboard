@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import Register from './pages/Register';
+import Login from './pages/Login';
 
 export default function App() {
   return (
@@ -11,7 +12,7 @@ export default function App() {
               <Link to="/" className='nav-link'>Home</Link>
             </li>
             <li className="nav-item">
-              <Link to="/register" className='nav-link'>Register</Link>
+              <Link to="/auth" className='nav-link'>Login</Link>
             </li>
           </ul>
         </div>
@@ -19,6 +20,7 @@ export default function App() {
 
       <main className="container mt-5">
         <Routes>
+          <Route path="/auth" element={<Login />} />
           <Route path="/register" element={<Register />} />
         </Routes>
       </main>
