@@ -5,7 +5,10 @@ const API = axios.create({
   withCredentials: true, // Include credentials (cookies) in requests
 });
 
-export const loginUser = (credentials) => API.post('/auth', credentials);
 export const registerUser = (userData) => API.post('/register', userData);
+export const loginUser = (credentials) => API.post('/auth', credentials);
+export const setAuthToken = (token) => {
+    API.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+};
 
 export default API;

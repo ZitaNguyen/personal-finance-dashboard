@@ -21,7 +21,10 @@ export default function Login() {
             if (response.status === 200) {
                 setMessage('Login successful! Redirecting...');
             }
-            // get token from response and store it 
+            // get token from response and store it
+            const token = response.data.token;
+            localStorage.setItem('token', token);
+            setAuthToken(token);
         } catch (error) {
             if (error.response) {
                 const errorMessage = error.response?.data?.message || 'Login failed. Please try again.';
