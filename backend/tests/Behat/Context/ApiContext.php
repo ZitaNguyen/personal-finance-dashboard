@@ -38,7 +38,7 @@ class ApiContext implements Context
         $this->em = $em;
     }
 
-    /** @BeforeScenario */
+    /** @BeforeScenario @ResetDatabase */
     public function resetDatabase() 
     {
         $data = $this->em->getMetadataFactory()->getAllMetadata();

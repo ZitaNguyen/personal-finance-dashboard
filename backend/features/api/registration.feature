@@ -1,5 +1,6 @@
 Feature: User Registration
 
+    @ResetDatabase
     Scenario: Successful registration
         When I send a POST request to "/api/register" with body:
             """
@@ -16,9 +17,9 @@ Feature: User Registration
         When I send a POST request to "/api/register" with body:
             """
             {
-                "email": "zitanguyen84@gmail.com",
-                "password": "abc123",
-                "username": "Zita"
+                "email": "testbehat@example.com",
+                "password": "secure456",
+                "username": "Test Behat"
             }
             """
         Then the response code should be 409
