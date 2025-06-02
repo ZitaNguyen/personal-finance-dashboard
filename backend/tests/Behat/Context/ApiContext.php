@@ -3,24 +3,51 @@
 namespace App\Tests\Behat\Context;
 
 use Behat\Step\Then;
-use Symfony\Component\HttpFoundation\Response;
 use Behat\Step\When;
 use Behat\Behat\Context\Context;
+use Doctrine\ORM\Tools\SchemaTool;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
+use Symfony\Component\HttpKernel\KernelInterface;
 
 class ApiContext implements Context
 {
+    /** @var KernelInterface */
+    private $kernel;
 
     /** @var KernelBrowser */
     private $client;
+    
+    /** @var EntityManagerInterface */
+    private $em;
 
     /** @var Response|null */
     private $response;
 
-    public function __construct(KernelBrowser $client)
+    public function __construct(
+        KernelInterface $kernel,
+        KernelBrowser $client, 
+        EntityManagerInterface $em)
     {
+        if ($kernel->getEnvironment() === 'prod') {
+            throw new \RuntimeException('Behat tests are not allowed in the production environment!');
+        }
+
         $this->client = $client;
+        $this->em = $em;
     }
+
+    /** @BeforeScenario */
+    public function resetDatabase() 
+    {
+        $data = $this->em->getMetadataFactory()->getAllMetadata();
+
+        $tool = new SchemaTool($this->em);
+        $tool->dropDatabase($data);
+        $tool->createSchema($data);
+    }
+
 
     #[When('I send a POST request to :endpoint with body:')]
     public function iSendAPostRequestToWithBody(string $endpoint, string $body)
