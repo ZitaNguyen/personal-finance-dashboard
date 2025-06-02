@@ -5,3 +5,4 @@ services:
 
     App\Tests\Behat\:
         resource: '../tests/Behat/*'
+        public: true

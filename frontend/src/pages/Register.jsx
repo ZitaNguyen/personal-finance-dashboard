@@ -21,7 +21,7 @@ export default function Register() {
         try {
             const response = await registerUser(form);
             if (response.status === 201) {
-                setMessage('Registration successful! Redirecting to login...');
+                setMessage(response.data.message || 'Registration successful! Redirecting to login...');
                 setTimeout(() => {
                     navigate('/auth');
                 }, 2000); // Redirect after 2 seconds
