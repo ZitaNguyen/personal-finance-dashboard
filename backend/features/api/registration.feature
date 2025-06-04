@@ -2,7 +2,7 @@ Feature: User Registration
 
     @ResetDatabase
     Scenario: Successful registration
-        When I send a POST request to "/api/register" with body:
+        Given I register with body:
             """
             {
                 "email": "testbehat@example.com",
@@ -14,7 +14,7 @@ Feature: User Registration
         And the response should contain "User registered successfully, please check your email to verify your account."
 
     Scenario: Registration with already used email
-        When I send a POST request to "/api/register" with body:
+        Given I register with body:
             """
             {
                 "email": "testbehat@example.com",
