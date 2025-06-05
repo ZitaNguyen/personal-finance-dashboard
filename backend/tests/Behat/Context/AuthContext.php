@@ -18,6 +18,7 @@ class AuthContext implements Context
     private string $verificationLink;
 
     private const API_REGISTER = '/api/register';
+    private const API_LOGIN = '/api/auth';
 
     public function __construct(
         private KernelInterface $kernel,
@@ -65,6 +66,12 @@ class AuthContext implements Context
     public function visitVerificationLink()
     {   
         $this->helper->sendGETRequest($this->verificationLink);
+    }
+
+    #[When('I connect with this account:')]
+    public function connectUser(string $body)
+    {
+        $this->helper->sendPOSTRequest(self::API_LOGIN, $body);
     }
 
     #[Then('the response code should be :statusCode')]
